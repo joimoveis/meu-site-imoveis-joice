@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organização Financeira de Imóveis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            background-color: #34495e;
+            color: white;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        .container {
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Organização Financeira de Imóveis</h1>
+    </header>
+    <nav>
+        <a href="#imoveis">Lista de Imóveis</a>
+        <a href="#historico">Histórico de Aluguéis</a>
+        <a href="#pagamentos">Pagamentos</a>
+        <a href="#despesas">Despesas</a>
+        <a href="#relatorios">Relatórios</a>
+        <a href="#contato">Contato</a>
+    </nav>
+    <div class="container">
+        <section id="imoveis" class="card">
+            <h2>Lista de Imóveis</h2>
+            <table id="tabelaImoveis">
+                <tr>
+                    <th>Imóvel</th>
+                    <th>Localização</th>
+                    <th>Valor do Aluguel</th>
+                    <th>Datas de Pagamento</th>
+                </tr>
+                <!-- Linhas serão adicionadas aqui dinamicamente -->
+            </table>
+            <div class="form-group">
+                <label for="imovelNome">Imóvel:</label>
+                <input type="text" id="imovelNome">
+            </div>
+            <div class="form-group">
+                <label for="localizacao">Localização:</label>
+                <input type="text" id="localizacao">
+            </div>
+            <div class="form-group">
+                <label for="valorAluguel">Valor do Aluguel:</label>
+                <input type="text" id="valorAluguel">
+            </div>
+            <div class="form-group">
+                <label for="datasPagamento">Datas de Pagamento:</label>
+                <input type="text" id="datasPagamento">
+            </div>
+            <button class="btn" onclick="adicionarImovel()">Adicionar Imóvel</button>
+        </section>
+        <section id="historico" class="card">
+            <h2>Histórico de Aluguéis</h2>
+            <table id="tabelaHistorico">
+                <tr>
+                    <th>Imóvel</th>
+                    <th>Locatário</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                </tr>
+                <!-- Linhas serão adicionadas aqui dinamicamente -->
+            </table>
+        </section>
+        <section id="pagamentos" class="card">
+            <h2>Pagamentos</h2>
+            <div class="form-group">
+                <label for="pagamentoImovel">Imóvel:</label>
+                <input type="text" id="pagamentoImovel">
+            </div>
+            <div class="form-group">
+                <label for="pagamentoValor">Valor:</label>
+                <input type="text" id="pagamentoValor">
+            </div>
+            <div class="form-group">
+                <label for="pagamentoData">Data:</label>
+                <input type="date" id="pagamentoData">
+            </div>
+            <button class="btn" onclick="adicionarPagamento()">Adicionar Pagamento</button>
+        </section>
+        <section id="despesas" class="card">
+            <h2>Despesas</h2>
+            <div class="form-group">
+                <label for="descricaoDespesa">Descrição:</label>
+                <input type="text" id="descricaoDespesa">
+            </div>
+            <div class="form-group">
+                <label for="valorDespesa">Valor:</label>
+                <input type="text" id="valorDespesa">
+            </div>
+            <div class="form-group">
+                <label for="dataDespesa">Data:</label>
+                <input type="date" id="dataDespesa">
+            </div>
+            <button class="btn" onclick="adicionarDespesa()">Adicionar Despesa</button>
+        </section>
+        <section id="relatorios" class="card">
+            <h2>Relatórios</h2>
+            <canvas id="financeChart"></canvas>
+            <script>
+                var ctx = document.getElementById('financeChart').getContext('2d');
+                var financeChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Receitas',
+                            data: [1200, 1300, 1100, 1500, 1400, 1600, 1800, 1700, 1600, 1500, 1400, 1300],
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Despesas',
+                            data: [400, 300, 500, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            </script>
+        </section>
+        <section id="contato" class="card">
+            <h2>Contato</h2>
+            <p>Para mais informações, entre em contato pelo e-mail: <a href="mailto:exemplo@exemplo.com">exemplo@exemplo.com</a></p>
+        </section>
+    </div>
+    <script>
+        function adicionarImovel() {
+            var nome = document.getElementById('imovelNome').value;
+            var localizacao = document.getElementById('localizacao').value;
+            var valorAluguel = document.getElementById('valorAluguel').value;
+            var datasPagamento = document.getElementById('datasPagamento').value;
+
+            var tabela = document.getElementById('tabelaImoveis');
+            var novaLinha = tabela.insertRow();
+
+            var celula1 = novaLinha.insertCell(0);
+            var celula2 = novaLinha.insertCell(1);
+            var celula3 = novaLinha.insertCell(2);
+            var celula4 = novaLinha.insertCell(3);
+
+            celula1.innerHTML = nome;
+            celula2.innerHTML = localizacao;
+            celula3.innerHTML = valorAluguel;
+            celula4.innerHTML = datasPagamento;
+        }
+
+        function adicionarPagamento() {
+            var imovel = document.getElementById('pagamentoImovel').value;
+            var valor = document.getElementById('pagamentoValor').value;
+            var data = document.getElementById('pagamentoData').value;
+
+            var tabela = document.getElementById('tabelaHistorico');
+            var novaLinha = tabela.insertRow();
+
+            var celula1 = novaLinha.insertCell(0);
+            var celula2 = novaLinha.insertCell(1);
+            var celula3 = novaLinha.insertCell(2);
+            var celula4 = novaLinha.insertCell(3);
+
+            celula1.innerHTML = imovel;
+            celula2.innerHTML = 'Locatário';  // Aqui você pode adicionar um campo para o locatário
+            celula3.innerHTML = data;
+            celula4.innerHTML = valor;
+        }
+
+        function adicionarDespesa() {
+            var descricao = document.getElementById('descricaoDespesa').value;
+            var valor = document.getElementById('valorDespesa').value;
+            var data = document.getElementById('dataDespesa').value;
+
+            var tabela = document.getElementById('tabelaDespesas');
+            var novaLinha = tabela.insertRow();
+
+            var celula1 = novaLinha.insertCell(0);
+            var celula2 = novaLinha.insertCell(1);
+            var celula3 = novaLinha.insertCell(2);
+
+            celula1.innerHTML = descricao;
+            celula2.innerHTML = valor;
+            celula3.innerHTML = data;
+        }
+    </script>
+</body>
+</html>
